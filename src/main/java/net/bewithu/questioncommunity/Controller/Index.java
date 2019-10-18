@@ -53,19 +53,4 @@ public class Index {
         return "exception";
     }
 
-    @RequestMapping(path = {"/vm"},method = {RequestMethod.GET,RequestMethod.POST})
-    public String template(Model model,
-                           HttpServletRequest reuqest,
-                           HttpServletResponse response){
-       HttpSession session=  reuqest.getSession();
-       model.addAttribute("sessionid",session.getId());
-        String[] s =new String[]{"蓝色","绿色"};
-
-        List<String> list = Arrays.asList(new String[]{"蓝色","绿色"});
-
-        model.addAttribute("value1","123");
-        model.addAttribute("colors",list);
-        return "home";
-
-    }
 }
