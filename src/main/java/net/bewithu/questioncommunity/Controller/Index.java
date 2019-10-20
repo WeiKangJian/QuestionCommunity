@@ -1,27 +1,16 @@
 package net.bewithu.questioncommunity.Controller;
 
 import net.bewithu.questioncommunity.Service.add;
-import net.bewithu.questioncommunity.Service.print;
-import net.bewithu.questioncommunity.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 //@Controller
 public class Index {
 
-    @Autowired
-    print p;
 
     @Autowired
     add a;
