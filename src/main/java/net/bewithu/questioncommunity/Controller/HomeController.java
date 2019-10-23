@@ -1,15 +1,14 @@
 package net.bewithu.questioncommunity.Controller;
 
-import net.bewithu.questioncommunity.Service.QuestionService;
-import net.bewithu.questioncommunity.Service.UserService;
-import net.bewithu.questioncommunity.Service.add;
+import net.bewithu.questioncommunity.Service.*;
 import net.bewithu.questioncommunity.dao.QuestionDAO;
-import net.bewithu.questioncommunity.model.HostHolder;
-import net.bewithu.questioncommunity.model.Question;
-import net.bewithu.questioncommunity.model.ViewObject;
+import net.bewithu.questioncommunity.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -30,15 +29,25 @@ public class HomeController {
     UserService userService;
     @Autowired
     HostHolder hostHolder;
+    @Autowired
+    CommentService commentService;
+    @Autowired
+    Util util;
+
+    /**
+     * 获取主页符合内容，生成VIEW
+     * @param userId
+     * @param offset
+     * @param limit
+     * @return
+     */
     private List<ViewObject> getQuestions(int userId, int offset, int limit) {
-        Date d = new Date();
         SimpleDateFormat sf =new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String date = sf.format(d);
         List<Question> questionList = questionService.getLatestQuestions(userId, offset, limit);
         List<ViewObject> vos = new ArrayList<>();
         for (Question question : questionList) {
             ViewObject vo = new ViewObject();
-            vo.set("time",date);
+            vo.set("time",sf.format(question.getCreatedDate()));
             vo.set("question", question);
             vo.set("user", userService.getUser(question.getUserId()));
             vos.add(vo);
@@ -57,6 +66,7 @@ public class HomeController {
                         @RequestParam(value = "pop", defaultValue = "0") int pop) {
 //        a.contextLoads();
         model.addAttribute("vos", getQuestions(0, pop, 10));
+        model.addAttribute("nextPop",pop+10);
         return "index";
     }
     /**
@@ -77,10 +87,18 @@ public class HomeController {
      * @return
      */
     @RequestMapping(path = {"/loginview"}, method = {RequestMethod.GET, RequestMethod.POST})
-    public String loginview(Model model) {
+    public String loginview(Model model,
+                            @RequestParam(value = "next",required = false) String next,
+                            HttpServletResponse response) {
+        //禁止浏览器保存登陆界面的缓存，防止用户后退重复提交表单
+        response.setHeader("Pragma","No-cache");
+        response.setHeader("Cache-Control","No-cache");
+        response.setDateHeader("Expires", -1);
+        response.setHeader("Cache-Control", "No-store");
         if(hostHolder.getUser()!=null){
             return "redirect:/";
         }
+        model.addAttribute("next",next);
         return "login";
     }
     /**
@@ -110,15 +128,26 @@ public class HomeController {
     public String login(Model model,
                         @RequestParam(value = "username") String username,
                         @RequestParam(value = "password") String password,
+                        @RequestParam(value = "next", required = false) String next,
                         HttpServletResponse httpServletResponse) {
         HashMap<String, String> map = userService.login(username,password);
+        /**
+         * 登陆信息成功，保存t票
+         */
         if (map.containsKey("ticket")) {
             Cookie cookie =new Cookie("ticket",map.get("ticket"));
+            //设置cookie在电脑端存活时间
             cookie.setMaxAge(3600*5);
             cookie.setPath("/");
             httpServletResponse.addCookie(cookie);
+            if(!StringUtils.isEmpty(next)){
+                if(util.judgeLegal(next)) {
+                    return "redirect:" + next;
+                }
+            }
             return "redirect:/";
         } else {
+            //失败信息保存
             model.addAttribute("msg",map.get("msg"));
             return "login";
         }
@@ -131,5 +160,33 @@ public class HomeController {
         userService.vaildCookies(ticket);
         hostHolder.clear();
         return "redirect:/";
+    }
+
+    /**
+     * 发布问题
+     */
+     @RequestMapping(path ="/question/add")
+     @ResponseBody
+     public String addQuestion(Model model,
+                               @RequestParam(value="title") String title,
+                               @RequestParam(value = "content") String content){
+         User user =hostHolder.getUser();
+         if(user==null){
+          return Util.returnJson(999," ");
+         }
+         questionService.addQuestion(title,content,user.getId());
+        return Util.returnJson(0,"ok");
+     }
+
+    /**
+     * 转到问题详情并显示评论界面处理
+     */
+    @RequestMapping(path = "/question/{questionId}",method = {RequestMethod.GET,RequestMethod.POST})
+    public String comment(Model model,
+                          @PathVariable(value = "questionId") int entityId){
+        List<Comment> commentList =commentService.selectByUserId(entityId);
+        model.addAttribute("comments",commentList);
+        model.addAttribute("question",questionService.getQuestion(entityId));
+        return  "detail";
     }
 }

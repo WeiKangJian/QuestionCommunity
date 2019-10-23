@@ -1,16 +1,23 @@
 package net.bewithu.questioncommunity.Service;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.security.MessageDigest;
 
-/**
- * Created by nowcoder on 2016/7/3.
- */
+@Service
 public class Util {
     private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
+    /**
+     * MD5加密组件
+     * @param key
+     * @return
+     */
     public static String MD5(String key) {
         char hexDigits[] = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
@@ -37,5 +44,24 @@ public class Util {
             logger.error("生成MD5失败", e);
             return null;
         }
+    }
+    /**
+     * 字符串判断是否合法
+     */
+    public static boolean judgeLegal(String next){
+        if(!StringUtils.isEmpty(next)&&next.charAt(0)=='/'){
+            return true;
+        }
+        return  false;
+    }
+
+    /**
+     * JSON辅助初始化
+     */
+    public static String returnJson(int code,String msg){
+        JSONObject json =new JSONObject();
+        json.put("code",code);
+        json.put("msg",msg);
+        return  json.toJSONString();
     }
 }

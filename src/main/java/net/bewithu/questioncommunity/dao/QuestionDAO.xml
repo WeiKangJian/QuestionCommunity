@@ -13,7 +13,7 @@
         <if test="userId != 0">
             WHERE user_id = #{userId}
         </if>
-        ORDER BY id ASC
+        ORDER BY id DESC
         LIMIT #{offset},#{limit}
     </select>
     <resultMap type="net.bewithu.questioncommunity.model.Question" id="questionResultMap">

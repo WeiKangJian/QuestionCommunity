@@ -37,7 +37,7 @@
                                             <a class="zm-item-vote-count js-expand js-vote-count" href="javascript:;" data-bind-votecount="">4168</a></div>
                                         <div class="zm-item-answer-author-info">
                                             <a class="author-link" data-tip="p$b$amuro1230" target="_blank" href="/user/$!{vo.user.id}">$!{vo.user.name}</a>
-                                            ，$!{vo.time}</div>
+                                            $!{vo.time}</div>
                                         <div class="zm-item-vote-info" data-votecount="4168" data-za-module="VoteInfo">
                                                 <span class="voters text">
                                                     <a href="#" class="more text">
@@ -52,7 +52,7 @@
                                             <div class="zm-meta-panel">
                                                 <a data-follow="q:link" class="follow-link zg-follow meta-item" href="javascript:;" id="sfb-123114">
                                                     <i class="z-icon-follow"></i>关注问题</a>
-                                                <a href="#" name="addcomment" class="meta-item toggle-comment js-toggleCommentBox">
+                                                <a href="" name="addcomment" class="meta-item toggle-comment js-toggleCommentBox">
                                                     <i class="z-icon-comment"></i>${vo.question.commentCount} 条评论</a>
 
 
@@ -68,8 +68,9 @@
                     </div>
                     #end
                 </div>
-                <a href="/?pop=10" id="zh-load-more" data-method="next" class="zg-btn-white zg-r3px zu-button-more" style="">更多</a></div>
+                <a href="/?pop=$!{nextPop}" id="zh-load-more" data-method="next" class="zg-btn-white zg-r3px zu-button-more" style="">更多</a></div>
         </div>
     </div>
 </div>
+#parse("js.html")
 #parse("footer.html")
