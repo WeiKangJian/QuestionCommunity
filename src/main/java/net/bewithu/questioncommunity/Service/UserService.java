@@ -22,7 +22,7 @@ public class UserService {
 
     Random random = new Random();
 
-    public User getUser(int id) {
+    public User getUserById(int id) {
         return userDAO.selectById(id);
     }
 
@@ -49,7 +49,7 @@ public class UserService {
         user.setPassword(Util.MD5(passWord+user.getSalt()));
         userDAO.addUser(user);
 
-        map.put("ticket",addticket(user.getId()));
+        map.put("ticket",addticket(userDAO.selectByName(userName).getId()));
         return map;
     }
 

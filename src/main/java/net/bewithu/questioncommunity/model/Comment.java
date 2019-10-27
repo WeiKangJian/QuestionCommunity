@@ -11,15 +11,6 @@ public class Comment {
     Date createdDate;
     int status;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    User user;
 
     public int getId() {
         return id;

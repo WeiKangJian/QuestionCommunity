@@ -60,14 +60,14 @@
                  data-widget="navigable" data-navigable-options="{&quot;items&quot;: &quot;&gt;.zm-item-answer&quot;}"
                  data-init="{&quot;params&quot;: {&quot;url_token&quot;: 36301524, &quot;pagesize&quot;: 10, &quot;offset&quot;: 0}, &quot;nodename&quot;: &quot;QuestionAnswerListV2&quot;}">
 
-                #foreach($comment in $comments)
+                #foreach($view in $views)
                 <div class="zm-item-answer  zm-item-expanded js-comment">
                     <link itemprop="url" href="">
                     <meta itemprop="answer-id" content="22162611">
                     <meta itemprop="answer-url-token" content="66862039">
                     <a class="zg-anchor-hidden" name="answer-22162611"></a>
 
-                    <div class="zm-votebar goog-scrollfloater js-vote" data-id="$!{comment.comment.id}">
+                    <div class="zm-votebar goog-scrollfloater js-vote" data-id="$!{view.comment.id}">
                         #if($comment.liked > 0)
                         <button class="up js-like pressed" title="赞同">
                             #else
@@ -90,8 +90,8 @@
                     <div class="answer-head">
                         <div class="zm-item-answer-author-info">
                             <a class="zm-item-link-avatar avatar-link" href="" target="_blank" data-tip="p$t$yingxiaodao">
-                                <img src="${comment.user.headUrl}" class="zm-list-avatar avatar"></a>
-                            <a class="author-link" data-tip="p$t$yingxiaodao" target="_blank" href="">${comment.user.name}</a>
+                                <img src="${view.user.headUrl}" class="zm-list-avatar avatar"></a>
+                            <a class="author-link" data-tip="p$t$yingxiaodao" target="_blank" href="">$!{view.user.name}</a>
                         </div>
                         <div class="zm-item-vote-info">
                                 <span class="voters text">
@@ -102,13 +102,13 @@
                     <div class="zm-item-rich-text expandable js-collapse-body" data-resourceid="6727688" data-action="/answer/content" data-author-name="营销岛" data-entry-url="/question/36301524/answer/66862039">
 
                         <div class="zm-editable-content clearfix">
-                            $comment.content
+                            $view.comment.content
                         </div>
                     </div>
                     <a class="zg-anchor-hidden ac" name="22162611-comment"></a>
                     <div class="zm-item-meta answer-actions clearfix js-contentActions">
                         <div class="zm-meta-panel">
-                            <a itemprop="url" class="answer-data-link meta-item" target="_blank" href="">发布于 </a>
+                            <a itemprop="url" class="answer-data-link meta-item" target="_blank" href="">发布于$!{view.time} </a>
                             <a href="" name="addcomment" class="meta-item toggle-comment js-toggleCommentBox">
                                 <i class="z-icon-comment"></i>4 条评论</a>
 

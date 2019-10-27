@@ -3,6 +3,7 @@ package net.bewithu.questioncommunity.Service;
 import net.bewithu.questioncommunity.dao.QuestionDAO;
 import net.bewithu.questioncommunity.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Scope("singleton")
 public class QuestionService {
     @Autowired
     QuestionDAO questionDAO;
@@ -48,5 +50,10 @@ public class QuestionService {
         return questionDAO.addQuestion(question)>0?true:false;
     }
 
-
+    /**
+     * 更新当前问题评论数量
+     */
+    public boolean upadteQuestionCommentCount(int id,int count){
+        return questionDAO.upadteCommentCount(id,count);
+    }
 }

@@ -1,11 +1,8 @@
 package net.bewithu.questioncommunity.Controller;
 
 import net.bewithu.questioncommunity.Service.*;
-import net.bewithu.questioncommunity.dao.QuestionDAO;
 import net.bewithu.questioncommunity.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -34,6 +31,7 @@ public class HomeController {
     @Autowired
     Util util;
 
+
     /**
      * 获取主页符合内容，生成VIEW
      * @param userId
@@ -49,7 +47,7 @@ public class HomeController {
             ViewObject vo = new ViewObject();
             vo.set("time",sf.format(question.getCreatedDate()));
             vo.set("question", question);
-            vo.set("user", userService.getUser(question.getUserId()));
+            vo.set("user", userService.getUserById(question.getUserId()));
             vos.add(vo);
         }
         return vos;
@@ -141,7 +139,7 @@ public class HomeController {
             cookie.setPath("/");
             httpServletResponse.addCookie(cookie);
             if(!StringUtils.isEmpty(next)){
-                if(util.judgeLegal(next)) {
+                if(Util.judgeLegal(next)) {
                     return "redirect:" + next;
                 }
             }
@@ -184,9 +182,37 @@ public class HomeController {
     @RequestMapping(path = "/question/{questionId}",method = {RequestMethod.GET,RequestMethod.POST})
     public String comment(Model model,
                           @PathVariable(value = "questionId") int entityId){
-        List<Comment> commentList =commentService.selectByUserId(entityId);
-        model.addAttribute("comments",commentList);
+        List<Comment> commentList =commentService.selectCommentByQuestionId(entityId);
+        List<ViewObject> views =new ArrayList<>();
+        for(Comment comment:commentList){
+            ViewObject vo =new ViewObject();
+            vo.set("time",new SimpleDateFormat("yyyy-MM-dd HH:mm").format(comment.getCreatedDate()));
+            vo.set("comment",comment);
+            vo.set("user",userService.getUserById(comment.getUserId()));
+            views.add(vo);
+        }
+        model.addAttribute("views",views);
         model.addAttribute("question",questionService.getQuestion(entityId));
         return  "detail";
+    }
+    /**
+     *添加评论信息
+     */
+    @RequestMapping(path = "/addComment",method = {RequestMethod.POST})
+    public String addComment(Model model,
+                             @RequestParam("content") String content,
+                             @RequestParam("questionId") int entityid){
+        if(hostHolder.getUser()==null){
+            return "login";
+        }
+        //预先防止用户输入空字符串和其他，限制最小长度，具体后期留给前端处理
+        if(content.length()<2){
+            return "redirect:/question/"+entityid;
+        }
+        commentService.addComment(content,entityid,hostHolder.getUser().getId());
+
+        //添加成功后，修改评论个数，这个后期还要通过异步实现，或者事务，这里先同步实现
+        questionService.upadteQuestionCommentCount(entityid,commentService.getCommentCount(entityid,1));
+        return "redirect:/question/"+entityid;
     }
 }

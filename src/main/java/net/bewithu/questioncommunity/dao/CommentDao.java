@@ -3,6 +3,7 @@ package net.bewithu.questioncommunity.dao;
 import net.bewithu.questioncommunity.model.Comment;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface CommentDao {
 
     @Select("select"+SELECT_FIELDS+" from"+TABLE_NAME+"where entity_id=#{entityId}")
     List<Comment> selectCommentByUserId(int entityId);
+
+    @Select("select count(id)"+" from"+TABLE_NAME+"where entity_id=#{entityId} and entity_type=#{entityType}")
+    int getCount(@Param("entityId") int entityId, @Param("entityType") int entityType);
 }
