@@ -25,6 +25,9 @@ public class UserService {
     public User getUserById(int id) {
         return userDAO.selectById(id);
     }
+    public  User getUserByName(String name){
+        return  userDAO.selectByName(name);
+    }
 
     /**
      * 注册功能
@@ -72,9 +75,13 @@ public class UserService {
         User user =userDAO.selectByName(userName);
         if(user.getPassword().equals(Util.MD5(passWord+user.getSalt()))){
             map.put("ticket",addticket(user.getId()));
+            return map;
         }
-
+        else{
+            map.put("msg","用户名或密码错误");
+        }
         return map;
+
     }
 
     /**
