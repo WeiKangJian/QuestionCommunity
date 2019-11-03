@@ -1,7 +1,12 @@
 package net.bewithu.questioncommunity.Controller;
 
+import net.bewithu.questioncommunity.Service.CommentService;
 import net.bewithu.questioncommunity.Service.LikeService;
+import net.bewithu.questioncommunity.Service.UserService;
 import net.bewithu.questioncommunity.Service.Util;
+import net.bewithu.questioncommunity.async.EventModel;
+import net.bewithu.questioncommunity.async.EventProducer;
+import net.bewithu.questioncommunity.async.EventType;
 import net.bewithu.questioncommunity.model.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +21,10 @@ public class LikeController {
     HostHolder hostHolder;
     @Autowired
     LikeService likeService;
+    @Autowired
+    CommentService commentService;
+    @Autowired
+    EventProducer eventProducer;
 
     private final  int ENTITY_QUESTION = 1;
 
@@ -25,7 +34,14 @@ public class LikeController {
         if(hostHolder.getUser()==null){
             return Util.returnJson(999,"未登录");
         }
+
         long likeCount = likeService.like(hostHolder.getUser().getId(),ENTITY_QUESTION,commentId);
+        EventModel likeEventModel =new EventModel();
+        likeEventModel.setType(EventType.LIKE)
+                .setActorId(hostHolder.getUser().getId())
+                .setOwnerId(commentService.getUserIdByCommentId(commentId))
+                .setMapValue("questionId",String.valueOf(commentService.getOneCommentById(commentId).getEntityId()));
+        eventProducer.produceEvent(likeEventModel);
         return  Util.returnJson(0,String.valueOf(likeCount));
     }
 

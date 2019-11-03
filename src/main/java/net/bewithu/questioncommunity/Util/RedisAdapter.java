@@ -9,6 +9,8 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Tuple;
 
+import java.util.List;
+
 @Service
 public class RedisAdapter implements InitializingBean {
     private  JedisPool jedisPool;
@@ -79,5 +81,32 @@ public class RedisAdapter implements InitializingBean {
             jedis.close();
         }
         return false;
+    }
+
+    public long lpush(String key,String value){
+        Jedis jedis = null;
+        try {
+            jedis=jedisPool.getResource();
+            return jedis.lpush(key,value);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }finally {
+            jedis.close();
+        }
+        return 0;
+    }
+
+    public List<String> brpop(String key){
+        Jedis jedis = null;
+        try {
+            jedis=jedisPool.getResource();
+            //参数0表示一直阻塞下去
+            return jedis.brpop(0,key);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }finally {
+            jedis.close();
+        }
+        return null;
     }
 }

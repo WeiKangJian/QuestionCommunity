@@ -23,4 +23,8 @@ public class RedisKeyProducer {
     public  static  String getDLikeKey(int entityType,int entityId){
         return  DISLIKE+SPILT+String.valueOf(entityType)+SPILT+String.valueOf(entityId);
     }
+
+    public  static String getEventQueueKey(){
+        return  "QUESTIONCOMMUNITY"+SPILT+"EVENTQUEUE";
+    }
 }

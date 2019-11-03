@@ -62,4 +62,17 @@ public class CommentService {
     public int getCommentCount(int entityId,int entityType){
         return commentDao.getCount(entityId,entityType);
     }
+    /**
+     * 根据评论ID，查发布评论的用户
+     */
+    public  int getUserIdByCommentId(int commentId){
+        return  commentDao.getUserIdByCommentId(commentId);
+    }
+
+    /**
+     * 根据ID查询单个评论
+     */
+    public  Comment getOneCommentById(int id){
+       return commentDao.selectOneCommentById(id);
+    }
 }
