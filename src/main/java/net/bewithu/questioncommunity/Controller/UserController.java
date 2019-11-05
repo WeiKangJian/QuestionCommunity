@@ -1,6 +1,9 @@
 package net.bewithu.questioncommunity.Controller;
 
 import net.bewithu.questioncommunity.Service.*;
+import net.bewithu.questioncommunity.async.EventModel;
+import net.bewithu.questioncommunity.async.EventProducer;
+import net.bewithu.questioncommunity.async.EventType;
 import net.bewithu.questioncommunity.model.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +32,8 @@ public class UserController {
     CommentService commentService;
     @Autowired
     MessageService messageService;
+    @Autowired
+    EventProducer eventProducer;
     @Autowired
     Util util;
 
@@ -67,6 +72,10 @@ public class UserController {
             cookie.setMaxAge(3600*5);
             cookie.setPath("/");
             httpServletResponse.addCookie(cookie);
+            EventModel registerModel =new EventModel();
+            registerModel.setOwnerId(userService.getUserByName(username).getId())
+                    .setType(EventType.REGISTER);
+            eventProducer.produceEvent(registerModel);
             return "redirect:/";
         } else {
             model.addAttribute("msg",map.get("msg"));

@@ -28,9 +28,11 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
     private static final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
     private HashMap<EventType, List<EventHandle>> config =new HashMap<EventType, List<EventHandle>>();
     private ApplicationContext applicationContext;
-    //线程池来复用
-    //    ExecutorService threadPoll = Executors.newFixedThreadPool(50);
-    //行吧，自己建就自己建
+    /**
+     * 线程池来复用
+     * ExecutorService threadPoll = Executors.newFixedThreadPool(50);
+     * 行吧，自己建就自己建
+    **/
     ThreadPoolExecutor threadPool  =new ThreadPoolExecutor(30,50,5, TimeUnit.MINUTES,new ArrayBlockingQueue<Runnable>(20));
 
     @Override
@@ -51,10 +53,12 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
             }
         }
 
-        //构建事件和处理器的map完毕，起线程
-        //哇，这个编辑器好牛逼，还推荐lambda,配合P3C美滋滋
-        //起30个消费者线程，并行处理队列
-        for(int i=0;i<=30;i++) {
+         /**
+          * 构建事件和处理器的map完毕，起线程
+          * 哇，这个编辑器好牛逼，还推荐lambda,配合P3C美滋滋
+          * 起30个消费者线程，并行处理队列
+          **/
+        for(int i=0;i<=3;i++) {
             threadPool.execute(() -> {
                 String key = RedisKeyProducer.getEventQueueKey();
                 while (true) {

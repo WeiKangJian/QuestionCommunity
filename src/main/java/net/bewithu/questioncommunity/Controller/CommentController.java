@@ -1,6 +1,9 @@
 package net.bewithu.questioncommunity.Controller;
 
 import net.bewithu.questioncommunity.Service.*;
+import net.bewithu.questioncommunity.async.EventModel;
+import net.bewithu.questioncommunity.async.EventProducer;
+import net.bewithu.questioncommunity.async.EventType;
 import net.bewithu.questioncommunity.model.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +27,8 @@ public class CommentController {
     @Autowired
     MessageService messageService;
     @Autowired
+    EventProducer eventProducer;
+    @Autowired
     Util util;
 
     /**
@@ -41,6 +46,14 @@ public class CommentController {
             return "redirect:/question/"+entityid;
         }
         commentService.addComment(content,entityid,hostHolder.getUser().getId());
+
+        //添加进异步队列
+        EventModel commentEvent =new EventModel();
+        commentEvent.setActorId(hostHolder.getUser().getId())
+                .setType(EventType.COMMENT)
+                .setOwnerId(questionService.getQuestion(entityid).getUserId())
+                .setMapValue("questionId",String.valueOf(entityid));
+        eventProducer.produceEvent(commentEvent);
 
         //添加成功后，修改评论个数，这个后期还要通过异步实现，或者事务，这里先同步实现
         questionService.upadteQuestionCommentCount(entityid,commentService.getCommentCount(entityid,1));

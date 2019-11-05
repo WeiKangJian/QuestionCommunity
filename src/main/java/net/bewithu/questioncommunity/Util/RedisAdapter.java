@@ -1,12 +1,14 @@
 package net.bewithu.questioncommunity.Util;
 
 import net.bewithu.questioncommunity.Controller.HomeController;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Tuple;
 
 import java.util.List;
@@ -18,11 +20,17 @@ public class RedisAdapter implements InitializingBean {
     private  static final Logger logger = LoggerFactory.getLogger(RedisAdapter.class);
     @Override
     public void afterPropertiesSet() throws Exception {
+        //这里加了配置文件就出错，我服了
+//        JedisPoolConfig config = new JedisPoolConfig();
+//        config.setMaxTotal(50);
+//        config.setMaxIdle(50);
+//        config.setMinIdle(0);
+////        jedisPoolConfig.setMaxIdle(50);
+////        jedisPoolConfig.setTestOnBorrow(true);
         jedisPool =new JedisPool("redis://localhost:6379/9");
     }
 
     public static  void main(String [] args){
-
         JedisPool pool = new JedisPool("redis://localhost:6379/9");
         for (int i = 0; i < 100; ++i) {
             Jedis j = pool.getResource();
