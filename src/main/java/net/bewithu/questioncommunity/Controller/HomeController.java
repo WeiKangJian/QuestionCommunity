@@ -33,6 +33,8 @@ public class HomeController {
     @Autowired
     MessageService messageService;
     @Autowired
+    FollowService followService;
+    @Autowired
     Util util;
 
     private  static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -71,6 +73,7 @@ public class HomeController {
         model.addAttribute("nextPop",pop+10);
         return "index";
     }
+
     /**
      * 访问用户个人主页
      * @param model
@@ -80,6 +83,19 @@ public class HomeController {
     @RequestMapping(path = {"/user/{userId}"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String userIndex(Model model, @PathVariable("userId") int userId) {
         model.addAttribute("vos", getQuestions(userId, 0, 10));
-        return "index";
+        User user =userService.getUserById(userId);
+        ViewObject vo = new ViewObject();
+        vo.set("user", user);
+        vo.set("commentCount", commentService.getCommentsCountByUserId(userId));
+        vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
+        vo.set("followeeCount", followService.getFolloweeCount(userId, EntityType.ENTITY_USER));
+        if (hostHolder.getUser() != null) {
+            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, userId));
+        } else {
+            vo.set("followed", false);
+        }
+        model.addAttribute("profileUser", vo);
+        return "profile";
     }
 }
+

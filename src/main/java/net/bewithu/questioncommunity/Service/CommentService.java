@@ -75,4 +75,11 @@ public class CommentService {
     public  Comment getOneCommentById(int id){
        return commentDao.selectOneCommentById(id);
     }
+
+    /**
+     * 查询一个用户一共的评论数目
+     */
+    public int getCommentsCountByUserId(int userId){
+        return  commentDao.selectCommentsByUserId(userId);
+    }
 }
