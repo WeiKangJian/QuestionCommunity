@@ -36,6 +36,8 @@ public class QuestionController {
     @Autowired
     LikeService likeService;
     @Autowired
+    FollowService followService;
+    @Autowired
     Util util;
 
     private final  int ENTITY_QUESTION = 1;
@@ -75,8 +77,16 @@ public class QuestionController {
             vo.set("likeCount",likeService.getLikeCount(ENTITY_QUESTION, comment.getId()));
             views.add(vo);
         }
+        List<User> followUsers = new ArrayList<>();
+        for(Integer id:followService.getFollowers(EntityType.ENTITY_QUESTION,entityId,0,10)){
+            followUsers.add(userService.getUserById(id));
+        }
+        model.addAttribute("followUsers",followUsers);
+        model.addAttribute("followCount",followService.getFollowerCount(EntityType.ENTITY_QUESTION,entityId));
+
         model.addAttribute("views",views);
         model.addAttribute("question",questionService.getQuestion(entityId));
+        model.addAttribute("followed",followService.isFollower(hostHolder.getUser().getId(),EntityType.ENTITY_QUESTION,entityId));
         return  "detail";
     }
 }

@@ -43,15 +43,15 @@
                     #end
                     <div class="zh-question-followers-sidebar">
                         <div class="zg-gray-normal">
-                            <a href="javascript:void(0);"><strong class="js-user-count">100</strong></a>人关注该问题
+                            <a href="javascript:void(0);"><strong class="js-user-count">$!{followCount}</strong></a>人关注该问题
                         </div>
                         <div class="list zu-small-avatar-list zg-clear js-user-list">
-<!--                            #foreach($vo in $followUsers)-->
+                            #foreach($vo in $followUsers)
                             <a class="zm-item-link-avatar js-user-${vo.id}" href="/user/${vo.id}"
                                data-original_title="${vo.name}">
-                                <切入点img src="${vo.headUrl}"
+                                <img src="${vo.headUrl}"
                                      class="zm-item-img-avatar"></a>
-<!--                            #end-->
+                            #end
                         </div>
                     </div>
                 </div>

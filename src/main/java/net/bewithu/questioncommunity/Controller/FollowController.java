@@ -1,5 +1,6 @@
 package net.bewithu.questioncommunity.Controller;
 
+import com.alibaba.fastjson.JSONObject;
 import net.bewithu.questioncommunity.Service.*;
 import net.bewithu.questioncommunity.model.HostHolder;
 import net.bewithu.questioncommunity.model.ViewObject;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +97,7 @@ public class FollowController {
      e* 展示用户关注的人的列表
      */
     @RequestMapping(path = "/user/{userId}/followees",method = RequestMethod.GET)
-    public String displayFollowees(Model model, @PathVariable("userId") int userId) {
+    public String displayFollowees(Model model, @PathVariable("userId") int userId) throws IOException {
         model.addAttribute("curUser", userService.getUserById(userId));
         model.addAttribute("followeeCount", followService.getFolloweeCount(userId,EntityType.ENTITY_USER));
         List<ViewObject> list = new ArrayList<>();
@@ -109,5 +113,58 @@ public class FollowController {
         }
         model.addAttribute("followees", list);
         return "followees";
+    }
+
+    /**
+     * 关注问题服务
+     *
+     * @param entityId 被关注的问题ID
+     * @return
+     */
+    @RequestMapping(path = "/followQuestion", method = RequestMethod.POST)
+    @ResponseBody
+    public String followQuestion(@RequestParam("questionId") int entityId) {
+        if (hostHolder.getUser() == null) {
+            return Util.returnJson(999, "未登录");
+        }
+        try {
+            followService.follow(hostHolder.getUser().getId(),EntityType.ENTITY_QUESTION,entityId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return Util.returnJson(1, "失败");
+        }
+        JSONObject questionfollow =new JSONObject();
+        questionfollow.put("code",0);
+        questionfollow.put("msg","成功");
+        questionfollow.put("id",hostHolder.getUser().getId());
+        questionfollow.put("count",followService.getFollowerCount(EntityType.ENTITY_QUESTION,entityId));
+        questionfollow.put("headUrl",hostHolder.getUser().getHeadUrl());
+        return questionfollow.toJSONString();
+    }
+
+    /**
+     * 取消关注问题服务
+     *
+     * @param entityId 被关注的问题ID
+     * @return
+     */
+    @RequestMapping(path = "/unfollowQuestion", method = RequestMethod.POST)
+    @ResponseBody
+    public String unfollowQuestion(@RequestParam("questionId") int entityId) {
+        if (hostHolder.getUser() == null) {
+            return Util.returnJson(999, "未登录");
+        }
+        try {
+            followService.unFollow(hostHolder.getUser().getId(),EntityType.ENTITY_QUESTION,entityId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return Util.returnJson(1, "失败");
+        }
+        JSONObject questionfollow =new JSONObject();
+        questionfollow.put("code",0);
+        questionfollow.put("msg","成功");
+        questionfollow.put("id",hostHolder.getUser().getId());
+        questionfollow.put("count",followService.getFollowerCount(EntityType.ENTITY_QUESTION,entityId));
+        return questionfollow.toJSONString();
     }
 }
