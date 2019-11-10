@@ -57,6 +57,7 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
           * 构建事件和处理器的map完毕，起线程
           * 哇，这个编辑器好牛逼，还推荐lambda,配合P3C美滋滋
           * 起30个消费者线程，并行处理队列
+          * 起不动的呀，默认缓存连接池最多9个，改配置文件报错，后面再说吧
           **/
         for(int i=0;i<=3;i++) {
             threadPool.execute(() -> {
@@ -68,7 +69,6 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
                             continue;
                         }
                         EventModel model = JSON.parseObject(message, EventModel.class);
-
                         for (EventHandle handle : config.get(model.getType())) {
                             handle.doHandle(model);
                         }
