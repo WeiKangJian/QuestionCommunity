@@ -52,6 +52,7 @@ public class CommentController {
         commentEvent.setActorId(hostHolder.getUser().getId())
                 .setType(EventType.COMMENT)
                 .setOwnerId(questionService.getQuestion(entityid).getUserId())
+                .setEntityId(entityid)
                 .setMapValue("questionId",String.valueOf(entityid));
         eventProducer.produceEvent(commentEvent);
 

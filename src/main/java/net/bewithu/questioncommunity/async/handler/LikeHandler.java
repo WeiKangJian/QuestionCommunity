@@ -26,7 +26,7 @@ public class LikeHandler implements EventHandle {
         String content ="同学"+"<a href=http://127.0.0.1:8080/user/"
                 +eventModel.getActorId()+">"
                 +userService.getUserById(eventModel.getActorId()).getName()+"</a>"
-                +"赞了你的评论。  "+"<a href=http://127.0.0.1:8080/question/"
+                +"赞了你的回答。  "+"<a href=http://127.0.0.1:8080/question/"
                 + eventModel.getMapValue("questionId")
                 +">"+"去看看"+"</a>" ;
         ///110是管理员账号

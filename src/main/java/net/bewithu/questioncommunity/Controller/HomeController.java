@@ -54,6 +54,7 @@ public class HomeController {
             vo.set("time",sf.format(question.getCreatedDate()));
             vo.set("question", question);
             vo.set("user", userService.getUserById(question.getUserId()));
+            vo.set("followCount",followService.getFollowerCount(EntityType.ENTITY_QUESTION,question.getId()));
             vos.add(vo);
         }
         return vos;
@@ -84,17 +85,17 @@ public class HomeController {
     public String userIndex(Model model, @PathVariable("userId") int userId) {
         model.addAttribute("vos", getQuestions(userId, 0, 10));
         User user =userService.getUserById(userId);
-        ViewObject vo = new ViewObject();
-        vo.set("user", user);
-        vo.set("commentCount", commentService.getCommentsCountByUserId(userId));
-        vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
-        vo.set("followeeCount", followService.getFolloweeCount(userId, EntityType.ENTITY_USER));
+        ViewObject vo2 = new ViewObject();
+        vo2.set("user", user);
+        vo2.set("commentCount", commentService.getCommentsCountByUserId(userId));
+        vo2.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
+        vo2.set("followeeCount", followService.getFolloweeCount(userId, EntityType.ENTITY_USER));
         if (hostHolder.getUser() != null) {
-            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, userId));
+            vo2.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, userId));
         } else {
-            vo.set("followed", false);
+            vo2.set("followed", false);
         }
-        model.addAttribute("profileUser", vo);
+        model.addAttribute("profileUser", vo2);
         return "profile";
     }
 }
