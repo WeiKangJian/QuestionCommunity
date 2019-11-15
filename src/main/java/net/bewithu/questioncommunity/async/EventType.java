@@ -24,7 +24,12 @@ public enum EventType {
         /**
          * 用户注册
          */
-        REGISTER(4);
+        REGISTER(4),
+
+        /**
+         * 用户发布问题
+         */
+        QUESTION(5);
 
         private int value;
 

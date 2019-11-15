@@ -34,7 +34,7 @@ public class QuestionService {
     /**
      * 添加问题
      */
-    public boolean addQuestion(String title,String content,int userId){
+    public int addQuestion(String title,String content,int userId){
         //脚本过滤(转义)
         title = HtmlUtils.htmlEscape(title);
         content =HtmlUtils.htmlEscape(content);
@@ -47,7 +47,7 @@ public class QuestionService {
         question.setCommentCount(0);
         question.setCreatedDate(new Date());
         question.setUserId(userId);
-        return questionDAO.addQuestion(question)>0?true:false;
+        return questionDAO.addQuestion(question);
     }
 
     /**

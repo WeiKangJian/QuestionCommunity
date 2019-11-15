@@ -80,10 +80,10 @@ public class FollowController {
         for (Integer id : userIdList) {
             ViewObject vo = new ViewObject();
             vo.set("user", userService.getUserById(id));
-            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, userService.getUserById(id).getId()));
-            vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
-            vo.set("followeeCount", followService.getFolloweeCount(userId,EntityType.ENTITY_USER));
-            vo.set("commentCount", commentService.getCommentsCountByUserId(userId));
+            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, id));
+            vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, id));
+            vo.set("followeeCount", followService.getFolloweeCount(id,EntityType.ENTITY_USER));
+            vo.set("commentCount", commentService.getCommentsCountByUserId(id));
             list.add(vo);
         }
         model.addAttribute("followers", list);
@@ -102,10 +102,10 @@ public class FollowController {
         for (Integer id : userIdList) {
             ViewObject vo = new ViewObject();
             vo.set("user", userService.getUserById(id));
-            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER,userService.getUserById(id).getId()));
-            vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
-            vo.set("followeeCount", followService.getFolloweeCount(userId,EntityType.ENTITY_USER));
-            vo.set("commentCount", commentService.getCommentsCountByUserId(userId));
+            vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER,id));
+            vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, id));
+            vo.set("followeeCount", followService.getFolloweeCount(id,EntityType.ENTITY_USER));
+            vo.set("commentCount", commentService.getCommentsCountByUserId(id));
             list.add(vo);
         }
         model.addAttribute("followees", list);

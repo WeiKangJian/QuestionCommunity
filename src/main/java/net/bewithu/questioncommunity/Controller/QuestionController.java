@@ -1,6 +1,9 @@
 package net.bewithu.questioncommunity.Controller;
 
 import net.bewithu.questioncommunity.Service.*;
+import net.bewithu.questioncommunity.async.EventModel;
+import net.bewithu.questioncommunity.async.EventProducer;
+import net.bewithu.questioncommunity.async.EventType;
 import net.bewithu.questioncommunity.model.Comment;
 import net.bewithu.questioncommunity.model.HostHolder;
 import net.bewithu.questioncommunity.model.User;
@@ -38,6 +41,8 @@ public class QuestionController {
     @Autowired
     FollowService followService;
     @Autowired
+    EventProducer eventProducer;
+    @Autowired
     Util util;
 
     private final  int ENTITY_QUESTION = 1;
@@ -53,7 +58,15 @@ public class QuestionController {
         if(user==null){
             return Util.returnJson(999," ");
         }
-        questionService.addQuestion(title,content,user.getId());
+        int questionId = questionService.addQuestion(title,content,user.getId());
+        //添加消息队列
+        EventModel eventModel =new EventModel();
+        eventModel.setEntityId(questionId).
+                setType(EventType.QUESTION).
+                setActorId(user.getId()).
+                setEntityType(EntityType.ENTITY_QUESTION);
+        eventProducer.produceEvent(eventModel);
+
         return Util.returnJson(0,"ok");
     }
 

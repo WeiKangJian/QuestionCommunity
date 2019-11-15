@@ -30,19 +30,24 @@ public class FeedHandler implements EventHandle {
 
     @Override
     public void doHandle(EventModel eventModel) {
-        if(eventModel.getType()==EventType.COMMENT){
             Feed feed =new Feed();
             feed.setUserId(eventModel.getActorId());
             feed.setCreatedDate(new Date());
-            feed.setType(EntityType.ENTITY_COMMENT);
+            switch (eventModel.getType()){
+                case COMMENT:
+                    feed.setType(EntityType.ENTITY_COMMENT);
+                    break;
+                case QUESTION:
+                    feed.setType(EntityType.ENTITY_QUESTION);
+                    break;
+            }
             feed.setData(intizeCommentData(eventModel));
             feedService.insertFeed(feed);
-        }
     }
 
     @Override
     public List<EventType> getSupportEventType() {
-        return Arrays.asList(EventType.COMMENT);
+        return Arrays.asList(EventType.COMMENT, EventType.QUESTION);
     }
 
     public String intizeCommentData(EventModel eventModel){
