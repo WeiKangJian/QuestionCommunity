@@ -13,6 +13,7 @@ public interface QuestionDAO {
 
     @Insert({"insert into ", TABLE_NAME, "(", INSERT_FIELDS,
             ") values (#{title},#{content},#{createdDate},#{userId},#{commentCount})"})
+    @SelectKey(statement="select last_insert_id()",before=false,keyProperty="id",resultType=Integer.class,keyColumn="id")
     int addQuestion(Question question);
 
     @Select("select"+SELECT_FIELDS+" from"+TABLE_NAME+"where id=#{id}")

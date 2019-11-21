@@ -5,6 +5,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -65,5 +67,12 @@ public class SearchService {
         }
         return  reslist;
     }
-
+        public boolean indexUpdate(int id,String content,String title) throws IOException, SolrServerException {
+            SolrInputDocument doc =new SolrInputDocument();
+            doc.setField("id",id);
+            doc.setField("question_content",content);
+            doc.setField("question_title",title);
+            UpdateResponse response = client.add(doc,1000);
+            return  response!=null&&response.getStatus()==0;
+        }
 }

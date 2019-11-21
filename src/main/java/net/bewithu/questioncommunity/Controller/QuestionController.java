@@ -8,6 +8,8 @@ import net.bewithu.questioncommunity.model.Comment;
 import net.bewithu.questioncommunity.model.HostHolder;
 import net.bewithu.questioncommunity.model.User;
 import net.bewithu.questioncommunity.model.ViewObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,8 +45,11 @@ public class QuestionController {
     @Autowired
     EventProducer eventProducer;
     @Autowired
+    SearchService searchService;
+    @Autowired
     Util util;
 
+    private  static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
     private final  int ENTITY_QUESTION = 1;
     /**
      * 发布问题
@@ -66,7 +71,11 @@ public class QuestionController {
                 setActorId(user.getId()).
                 setEntityType(EntityType.ENTITY_QUESTION);
         eventProducer.produceEvent(eventModel);
-
+        try {
+            searchService.indexUpdate(questionId, content, title);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
         return Util.returnJson(0,"ok");
     }
 

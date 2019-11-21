@@ -47,7 +47,8 @@ public class QuestionService {
         question.setCommentCount(0);
         question.setCreatedDate(new Date());
         question.setUserId(userId);
-        return questionDAO.addQuestion(question);
+        questionDAO.addQuestion(question);
+        return question.getId();
     }
 
     /**
