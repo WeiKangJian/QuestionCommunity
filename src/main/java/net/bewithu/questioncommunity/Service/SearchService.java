@@ -67,6 +67,16 @@ public class SearchService {
         }
         return  reslist;
     }
+
+    /**
+     * 实时更新数据库的索引
+     * @param id
+     * @param content
+     * @param
+     * @return
+     * @throws IOException
+     * @throws SolrServerException
+     */
         public boolean indexUpdate(int id,String content,String title) throws IOException, SolrServerException {
             SolrInputDocument doc =new SolrInputDocument();
             doc.setField("id",id);

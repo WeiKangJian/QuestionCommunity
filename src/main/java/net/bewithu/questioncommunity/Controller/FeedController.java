@@ -36,7 +36,7 @@ public class FeedController {
             lists = feedService.getFeeds(new ArrayList<Integer>(), 10, 10);
         }else {
             List<Integer> followeesIds =followService.getFollowees(hostHolder.getUser().getId(), EntityType.ENTITY_USER,0,50);
-            lists = feedService.getFeeds(followeesIds, 10, 10);
+            lists = feedService.getFeeds(followeesIds, 10000, 10);
         }
             ViewObject vo = new ViewObject();
             vo.set("userHeadUrl","http://images.nowcoder.com/head/834t.png");
