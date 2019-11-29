@@ -2,6 +2,9 @@ package net.bewithu.questioncommunity.Controller;
 
 import com.alibaba.fastjson.JSONObject;
 import net.bewithu.questioncommunity.Service.*;
+import net.bewithu.questioncommunity.async.EventModel;
+import net.bewithu.questioncommunity.async.EventProducer;
+import net.bewithu.questioncommunity.async.EventType;
 import net.bewithu.questioncommunity.model.HostHolder;
 import net.bewithu.questioncommunity.model.ViewObject;
 import org.slf4j.Logger;
@@ -25,25 +28,30 @@ public class FollowController {
     HostHolder hostHolder;
     @Autowired
     CommentService commentService;
+    @Autowired
+    EventProducer eventProducer;
 
     /**
      * 关注用户服务
      *
-     * @param ownerUoserId 被关注的用户ID
+     * @param ownerUserId 被关注的用户ID
      * @return
      */
     @RequestMapping(path = "/followUser", method = RequestMethod.POST)
     @ResponseBody
-    public String follower(@RequestParam("userId") int ownerUoserId) {
+    public String follower(@RequestParam("userId") int ownerUserId) {
         if (hostHolder.getUser() == null) {
             return Util.returnJson(999, "未登录");
         }
         try {
-            followService.follow(hostHolder.getUser().getId(), EntityType.ENTITY_USER, ownerUoserId);
+            followService.follow(hostHolder.getUser().getId(), EntityType.ENTITY_USER, ownerUserId);
         } catch (Exception e) {
             logger.error(e.getMessage());
             return Util.returnJson(1, "失败");
         }
+        EventModel model =new EventModel();
+        model.setType(EventType.FOLLOWER).setActorId(hostHolder.getUser().getId()).setOwnerId(ownerUserId);
+        eventProducer.produceEvent(model);
         return Util.returnJson(0, "成功");
     }
 
@@ -65,6 +73,7 @@ public class FollowController {
             logger.error(e.getMessage());
             return Util.returnJson(1, "失败");
         }
+
         return Util.returnJson(0, "成功");
     }
 

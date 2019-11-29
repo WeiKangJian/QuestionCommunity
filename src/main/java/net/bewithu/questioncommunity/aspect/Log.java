@@ -9,12 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-
-
-
 @Aspect
 @Component
-
 public class Log {
     private static  final Logger logger =  LoggerFactory.getLogger(Log.class);
     @Before("execution(* net.bewithu.questioncommunity.Controller.Index.test(..))")

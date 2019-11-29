@@ -29,7 +29,12 @@ public enum EventType {
         /**
          * 用户发布问题
          */
-        QUESTION(5);
+        QUESTION(5),
+
+        /**
+         * 用户关注
+         */
+        FOLLOWER(6);
 
         private int value;
 
