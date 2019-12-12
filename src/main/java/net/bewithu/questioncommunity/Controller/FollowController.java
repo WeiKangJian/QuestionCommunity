@@ -50,6 +50,7 @@ public class FollowController {
             return Util.returnJson(1, "失败");
         }
         EventModel model =new EventModel();
+
         model.setType(EventType.FOLLOWER).setActorId(hostHolder.getUser().getId()).setOwnerId(ownerUserId);
         eventProducer.produceEvent(model);
         return Util.returnJson(0, "成功");

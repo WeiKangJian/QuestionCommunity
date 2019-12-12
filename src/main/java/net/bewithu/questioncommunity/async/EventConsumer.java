@@ -8,6 +8,7 @@ import org.aspectj.runtime.internal.cflowstack.ThreadStackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 @Service
-public class EventConsumer implements InitializingBean, ApplicationContextAware {
+public class EventConsumer implements DisposableBean, InitializingBean, ApplicationContextAware {
     @Autowired
     RedisAdapter redisAdapter;
 
@@ -59,7 +60,9 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
           * 起30个消费者线程，并行处理队列
           * 起不动的呀，默认缓存连接池最多9个，改配置文件报错，后面再说吧
           **/
+         logger.info("开始创建线程池");
         for(int i=0;i<=3;i++) {
+            logger.info("创建的第"+i+"个线程");
             threadPool.execute(() -> {
                 String key = RedisKeyProducer.getEventQueueKey();
                 while (true) {
@@ -81,5 +84,10 @@ public class EventConsumer implements InitializingBean, ApplicationContextAware 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext =applicationContext;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        threadPool.shutdown();
     }
 }
