@@ -19,6 +19,8 @@ public class UserService {
     private UserDAO userDAO;
     @Autowired
     private LoginTicketDAO loginTicketDAO;
+    @Autowired
+     private  SensitiveService sensitiveService;
 
     Random random = new Random();
 
@@ -39,6 +41,10 @@ public class UserService {
         HashMap<String,String> map =new HashMap();
         if(userName.length()<5||passWord.length()<5){
             map.put("msg","用户名和密码的长度必须大于五");
+            return map;
+        }
+        if(!sensitiveService.matchTree(userName).equals(userName)){
+            map.put("msg","用户名包含敏感词汇，请重新设置");
             return map;
         }
         if(userDAO.selectByName(userName)!=null){
